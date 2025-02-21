@@ -7,6 +7,8 @@ const logger = require('morgan');
 
 mongoose.connect(process.env.MONGODB_URI);
 
+const petRouter = require('./controllers/pets.js');
+
 mongoose.connection.on('connected', () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
@@ -14,8 +16,10 @@ mongoose.connection.on('connected', () => {
 app.use(express.json());
 app.use(logger('dev'));
 
-// Routes go here
+app.use('/pets', petRouter);
+
 
 app.listen(3000, () => {
   console.log('The express app is ready!');
 });
+
