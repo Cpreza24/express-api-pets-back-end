@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   try {
     const foundPets = await Pet.find();
     res.status(200).json(foundPets);
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
@@ -27,9 +27,35 @@ router.get('/', async (req, res) => {
 router.get('/:petId', async (req, res) => {
   try {
     const foundPet = await Pet.findById(req.params.petId);
+    if (!foundPet) {
+      res.status(404);
+      throw new Error('Pet not found');
+    }
     res.status(200).json(foundPet);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    if (res.statusCode === 404) {
+      res.json({ err: err.message });
+    } else {
+      res.status(500).json({ err: err.message });
+    }
+  }
+});
+
+// DELETE - Delete Route
+router.delete('/:petId', async (req, res) => {
+  try {
+    const foundPet = await Pet.findByIdAndDelete(req.params.petId);
+    if (!foundPet) {
+      res.status(404);
+      throw new Error('Pet not found');
+    }
+    res.status(200).json(foundPet);
+  } catch (err) {
+    if (res.statusCode === 404) {
+      res.json({ err: err.message });
+    } else {
+      res.status(500).json({ err: err.message });
+    }
   }
 });
 
